@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
 import User from '../schemas/User';
 
 
 
-// Admin-only: Get all users
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find().select('-password');
@@ -14,7 +12,6 @@ export const getUsers = async (req: Request, res: Response) => {
   }
 };
 
-// Admin-only: Delete a user (Admins and Users)
 export const deleteUser = async (req: Request, res: Response):Promise<void> => {
   const { id } = req.params;
   try {
