@@ -1,3 +1,4 @@
+import { errorResponse } from "@/utils/responseFormatter";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
@@ -8,8 +9,8 @@ const authMiddleware = (
 ): void => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    res.status(401).json({ message: "Access denied" });
-    return
+    errorResponse(res, { message: "Access denied" }, 401);
+    return;
   }
 
   try {
@@ -17,7 +18,8 @@ const authMiddleware = (
     (req as any).user = decoded;
     next();
   } catch (err) {
-    res.status(400).json({ message: "Invalid token" });
+    errorResponse(res, { message: "Invalid token" }, 400);
+    return;
   }
 };
 
