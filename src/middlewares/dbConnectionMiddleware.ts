@@ -19,6 +19,7 @@ const dbConnectionMiddleware = (
       { message: "Database not connected. Please try again later." },
       503
     );
+    // throw new Error("Database Service in not available");
   }
 };
 

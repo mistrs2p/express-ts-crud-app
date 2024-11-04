@@ -10,7 +10,7 @@ const app = express();
 const dbConf = async () => {
   try {
     const dbState = await connectDB();
-    logger.info(`Database Connection State: ${dbStatus[dbState]}`);
+    logger.info(`Database Connection State: ---> ${dbStatus[dbState]} <---`);
   } catch (err: any) {
     logger.error("Database Connection Error: ", err);
   }
@@ -18,8 +18,8 @@ const dbConf = async () => {
 
 dbConf();
 
-app.use(dbConnectionMiddleware);
 
+app.use(dbConnectionMiddleware);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
