@@ -1,29 +1,20 @@
 import express from "express";
 import authRoutes from "@/routes/authRoutes";
 import userRoutes from "@/routes/userRoutes";
+import productRoute from "@/routes/productRoute";
 import connectDB, { dbStatus } from "@/db";
-import logger from "@/utils/logger";
 import dbConnectionMiddleware from "./middlewares/dbConnectionMiddleware";
 
 const app = express();
 
-const dbConf = async () => {
-  try {
-    const dbState = await connectDB();
-    logger.info(`Database Connection State: ---> ${dbStatus[dbState]} <---`);
-  } catch (err: any) {
-    logger.error("Database Connection Error: ", err);
-  }
-};
-
-dbConf();
-
+connectDB();
 
 app.use(dbConnectionMiddleware);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/products", productRoute);
 
 const PORT = process.env.PORT ?? 5000;
 
