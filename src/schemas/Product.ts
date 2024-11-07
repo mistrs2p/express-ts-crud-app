@@ -11,11 +11,11 @@ export interface IProduct extends Document {
 }
 
 const productSchema = new Schema<IProduct>({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true  },
   description: { type: String, required: true },
   price: { type: Number, required: true },
   ingredients: { type: [String], required: true },
-  image: { type: String, required: true },
+  image: { type: String, required: false },
   categoryId: {
     type: Schema.Types.ObjectId,
     ref: "Category",

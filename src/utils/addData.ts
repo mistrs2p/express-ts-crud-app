@@ -3,9 +3,6 @@ import Product from "@/schemas/Product";
 import mongoose from "mongoose";
 
 export const addData = async () => {
-  // await connectDB();
-
-  // Adding categories
   const categoriesData = [
     {
       name: "Sushi Rolls",
@@ -35,13 +32,12 @@ export const addData = async () => {
 
   console.log("Categories Map:", categoriesMap);
 
-  // Adding products with correct categoryId field name
   const productsData = [
     {
       name: "California Roll",
       description: "Crab stick, avocado, cucumber, and tobiko.",
       price: 8.99,
-      categoryId: categoriesMap["Sushi Rolls"], // Use categoryId instead of category
+      categoryId: categoriesMap["Sushi Rolls"], 
       ingredients: ["crab stick", "avocado", "cucumber", "tobiko"],
       image: "/images/california_roll.jpg",
     },
