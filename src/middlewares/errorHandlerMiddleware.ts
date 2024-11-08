@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseError } from "@/services/ErrorService/BaseError";
-import { ResponseService } from "@/services/ResponseService";
+import ResponseService from "@/services/ResponseService";
 
 export function errorHandlerMiddleware(
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): void {
   const isOperational = err instanceof BaseError && err.isOperational;
 
@@ -19,9 +19,9 @@ export function errorHandlerMiddleware(
       false,
       undefined,
       "ERR_INTERNAL_SERVER",
-      "critical",
+      "critical"
     );
   }
 
-  ResponseService.error(res, err as BaseError);
+  ResponseService.error(err as BaseError);
 }

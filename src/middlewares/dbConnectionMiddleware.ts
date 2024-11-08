@@ -1,12 +1,12 @@
 import logger from "@/utils/logger";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import { ResponseService } from "@/services/ResponseService";
+import ResponseService from "@/services/ResponseService";
 
 const dbConnectionMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const dbStatus = mongoose.connection.readyState;
 
@@ -15,8 +15,7 @@ const dbConnectionMiddleware = (
     next();
   } else {
     ResponseService.serviceUnavailable(
-      res,
-      "Database not connected. Please try again later.",
+      "Database not connected. Please try again later."
     );
   }
 };

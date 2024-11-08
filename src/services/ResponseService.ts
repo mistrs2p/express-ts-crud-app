@@ -9,21 +9,35 @@ export interface Result<T = any> {
   headers?: Record<string, string>;
 }
 
-export class ResponseService {
+export class ResponseService<T = any> {
+  private static instance: ResponseService;
+  private response: ExpressResponse | null = null;
+
+  private constructor() {}
+
+  static getInstance(): ResponseService {
+    if (!ResponseService.instance) {
+      ResponseService.instance = new ResponseService();
+    }
+    return ResponseService.instance;
+  }
+
+  setResponse(res: ExpressResponse): void {
+    this.response = res;
+  }
+
   /**
    * Send a success response
-   * @param response Express response object
    * @param data Data to send in response body
    * @param message Optional success message
    * @param statusCode HTTP status code (default is 200)
    */
-  public static success<T>(
-    response: ExpressResponse,
-    data: T,
-    message = "Success",
-    statusCode = 200,
-  ): void {
-    response.status(statusCode).json({
+  public success(data: T, message = "Success", statusCode = 200): void {
+    if (!this.response) {
+      console.error("Response object is not set.");
+      return;
+    }
+    this.response.status(statusCode).json({
       success: true,
       statusCode,
       message,
@@ -34,68 +48,55 @@ export class ResponseService {
   /**
    * Send a "200 OK" success response
    */
-  public static ok<T>(
-    response: ExpressResponse,
-    data: T,
-    message = "Request succeeded",
-  ): void {
-    this.success(response, data, message, 200);
+  public ok(data: T, message = "Request succeeded"): void {
+    this.success(data, message, 200);
   }
 
   /**
    * Send a "201 Created" success response
    */
-  public static created<T>(
-    response: ExpressResponse,
-    data: T,
-    message = "Resource created successfully",
-  ): void {
-    this.success(response, data, message, 201);
+  public created(data: T, message = "Resource created successfully"): void {
+    this.success(data, message, 201);
   }
 
   /**
    * Send a "202 Accepted" success response
    */
-  public static accepted<T>(
-    response: ExpressResponse,
-    data: T,
-    message = "Request accepted for processing",
-  ): void {
-    this.success(response, data, message, 202);
+  public accepted(data: T, message = "Request accepted for processing"): void {
+    this.success(data, message, 202);
   }
 
   /**
    * Send a "204 No Content" success response
    */
-  public static noContent<T>(
-    response: ExpressResponse,
-    data?: T,
-    message = "No content",
-  ): void {
-    this.success(response, data, message, 204);
+  public noContent(data?: T, message = "No content"): void {
+    this.success(data as T, message, 204);
   }
 
   /**
    * Send an error response
-   * @param response Express response object
    * @param error Error object, instance of BaseError
    */
-  public static error(response: ExpressResponse, error: BaseError): void {
+  public error(error: BaseError): void {
+    if (!this.response) {
+      console.error("Response object is not set.");
+      return;
+    }
     const { statusCode, message, details, logLevel = "error" } = error;
 
     if (logLevel === "error" || logLevel === "critical") {
       console.error(
         `[${logLevel.toUpperCase()} ${statusCode}] ${message}`,
-        details,
+        details
       );
     } else {
       console.log(
         `[${logLevel.toUpperCase()} ${statusCode}] ${message}`,
-        details,
+        details
       );
     }
 
-    response.status(statusCode).json({
+    this.response.status(statusCode).json({
       success: false,
       statusCode,
       message,
@@ -106,104 +107,80 @@ export class ResponseService {
   /**
    * Send a "bad request" response
    */
-  public static badRequest(
-    response: ExpressResponse,
-    message = "Bad Request",
-    details?: any,
-  ): void {
-    this.error(
-      response,
-      new BaseError(400, message, true, details, "ERR_BAD_REQUEST"),
-    );
+  public badRequest(message = "Bad Request", details?: any): void {
+    this.error(new BaseError(400, message, true, details, "ERR_BAD_REQUEST"));
   }
 
   /**
    * Send an "unauthorized" response
    */
-  public static unauthorized(
-    response: ExpressResponse,
-    message = "Unauthorized",
-  ): void {
+  public unauthorized(message = "Unauthorized"): void {
     this.error(
-      response,
-      new BaseError(401, message, true, undefined, "ERR_UNAUTHORIZED"),
+      new BaseError(401, message, true, undefined, "ERR_UNAUTHORIZED")
     );
   }
 
   /**
    * Send a "forbidden" response
    */
-  public static forbidden(
-    response: ExpressResponse,
-    message = "Forbidden",
-  ): void {
-    this.error(
-      response,
-      new BaseError(403, message, true, undefined, "ERR_FORBIDDEN"),
-    );
+  public forbidden(message = "Forbidden"): void {
+    this.error(new BaseError(403, message, true, undefined, "ERR_FORBIDDEN"));
   }
 
   /**
    * Send a "not found" response
    */
-  public static notFound(
-    response: ExpressResponse,
-    message = "Resource Not Found",
-  ): void {
-    this.error(
-      response,
-      new BaseError(404, message, true, undefined, "ERR_NOT_FOUND"),
-    );
+  public notFound(message = "Resource Not Found"): void {
+    this.error(new BaseError(404, message, true, undefined, "ERR_NOT_FOUND"));
   }
 
   /**
    * Send an "internal server error" response
    */
-  public static internalServerError(
-    response: ExpressResponse,
-    details?: any,
-  ): void {
+  public internalServerError(details?: any): void {
     this.error(
-      response,
       new BaseError(
         500,
         "Internal Server Error",
         false,
         details,
-        "ERR_INTERNAL_SERVER",
-      ),
+        "ERR_INTERNAL_SERVER"
+      )
     );
   }
 
   /**
    * Send a "503 Service Unavailable" response
    */
-  public static serviceUnavailable(
-    response: ExpressResponse,
+  public serviceUnavailable(
     message = "Service Unavailable",
-    details?: any,
+    details?: any
   ): void {
     this.error(
-      response,
-      new BaseError(503, message, false, details, "ERR_SERVICE_UNAVAILABLE"),
+      new BaseError(503, message, false, details, "ERR_SERVICE_UNAVAILABLE")
     );
   }
 
   /**
    * Send a response with custom headers
    */
-  public static withHeaders<T>(
-    response: ExpressResponse,
+  public withHeaders(
     data: T,
     message = "Success",
     statusCode = 200,
-    headers: Record<string, string> = {},
+    headers: Record<string, string> = {}
   ): void {
+
+    if (!this.response) {
+      console.error("Response object is not set.");
+      return;
+    }
+    
     Object.entries(headers).forEach(([key, value]) => {
-      response.setHeader(key, value);
+      this.response!.setHeader(key, value);
     });
 
-    response.status(statusCode).json({
+    this.response.status(statusCode).json({
       success: true,
       statusCode,
       message,
@@ -211,3 +188,5 @@ export class ResponseService {
     });
   }
 }
+
+export default ResponseService.getInstance();

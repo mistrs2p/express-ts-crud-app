@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "@/schemas/User";
-import { ResponseService } from "@/services/ResponseService";
 import jwt from "jsonwebtoken";
+import ResponseService from "@/services/ResponseService";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -10,7 +10,7 @@ export const register = async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ username });
 
     if (existingUser) {
-      return ResponseService.badRequest(res, "Username already exists", {
+      return ResponseService.badRequest("Username already exists", {
         username,
       });
     }
@@ -35,8 +35,8 @@ export const register = async (req: Request, res: Response) => {
       maxAge: 60 * 60 * 1000, // 1 hour
     });
 
-    ResponseService.created(res, "User created successfully");
+    ResponseService.created("User created successfully");
   } catch (err) {
-    ResponseService.badRequest(res, "Failed to create user", err);
+    ResponseService.badRequest("Failed to create user", err);
   }
 };

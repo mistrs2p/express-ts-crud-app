@@ -2,9 +2,12 @@ import express from "express";
 import authRoutes from "@/routes/authRoutes";
 import userRoutes from "@/routes/userRoutes";
 import productRoute from "@/routes/productRoute";
-import connectDB, { dbStatus } from "@/db";
+import connectDB from "@/db";
 import dbConnectionMiddleware from "./middlewares/dbConnectionMiddleware";
 import jsonMiddleware from "./middlewares/jsonMiddleware";
+import { responseServiceMiddleware } from "@/middlewares/responseServiceMiddleware";
+
+
 
 const app = express();
 
@@ -18,6 +21,10 @@ app.use(dbConnectionMiddleware);
 
 // parse response to json
 app.use(jsonMiddleware);
+
+// app.use(responseService)
+
+app.use(responseServiceMiddleware);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
