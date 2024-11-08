@@ -13,8 +13,10 @@ connectDB();
 // parse incomming request to json
 app.use(express.json());
 
+// check the connectivity of the Database
 app.use(dbConnectionMiddleware);
 
+// parse response to json
 app.use(jsonMiddleware);
 
 app.use("/api/auth", authRoutes);

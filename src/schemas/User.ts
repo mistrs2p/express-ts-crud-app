@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 const USER_ROLE = ["admin", "user"] as const;
 
@@ -7,6 +7,7 @@ export const USER_ROLE_ADMIN = "admin";
 export const USER_ROLE_USER = "user";
 
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   username: string;
   password: string;
   role: (typeof USER_ROLE)[number];

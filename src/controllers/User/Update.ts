@@ -14,8 +14,8 @@ export const update = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (user.role === USER_ROLE_ADMIN && role && role !== USER_ROLE_ADMIN) {
-      ResponseService.forbidden(res, "Cannot change the role of an admin user");
+    if (role && user.role === USER_ROLE_ADMIN &&  role !== USER_ROLE_ADMIN) {
+      ResponseService.forbidden(res, "Normal user cannot change the role of an admin user");
     }
 
     // if (user.role === USER_ROLE_USER && role && role === USER_ROLE_USER) {
