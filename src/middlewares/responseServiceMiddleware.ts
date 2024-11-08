@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ResponseService from "@/services/ResponseService";
 
-export const responseServiceMiddleware = (
+const responseServiceMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -9,3 +9,4 @@ export const responseServiceMiddleware = (
   ResponseService.setResponse(res);
   next();
 };
+export default responseServiceMiddleware;

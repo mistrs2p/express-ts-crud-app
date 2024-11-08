@@ -5,9 +5,7 @@ import productRoute from "@/routes/productRoute";
 import connectDB from "@/db";
 import dbConnectionMiddleware from "./middlewares/dbConnectionMiddleware";
 import jsonMiddleware from "./middlewares/jsonMiddleware";
-import { responseServiceMiddleware } from "@/middlewares/responseServiceMiddleware";
-
-
+import responseServiceMiddleware from "@/middlewares/responseServiceMiddleware";
 
 const app = express();
 
@@ -21,8 +19,6 @@ app.use(dbConnectionMiddleware);
 
 // parse response to json
 app.use(jsonMiddleware);
-
-// app.use(responseService)
 
 app.use(responseServiceMiddleware);
 
