@@ -1,27 +1,21 @@
 import { Request, Response } from "express";
 import User, { USER_ROLE_ADMIN, USER_ROLE_USER } from "@/schemas/User";
 import { successResponse, errorResponse } from "@/utils/responseFormatter";
+import { ResponseService } from "@/services/ResponseService";
 
-export const update = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const update = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { username, password, role, ...otherUpdates } = req.body;
 
   try {
     const user = await User.findById(id);
     if (!user) {
-      errorResponse(res, { message: "User not found" }, 404);
+      ResponseService.notFound(res, "User not found");
       return;
     }
 
     if (user.role === USER_ROLE_ADMIN && role && role !== USER_ROLE_ADMIN) {
-      errorResponse(
-        res,
-        { message: "Cannot change the role of an admin user" },
-        403
-      );
+      ResponseService.forbidden(res, "Cannot change the role of an admin user");
     }
 
     // if (user.role === USER_ROLE_USER && role && role === USER_ROLE_USER) {
@@ -29,21 +23,17 @@ export const update = async (
     // }
 
     if (password) {
-      errorResponse(
-        res,
-        { message: "Password cannot be updated directly" },
-        403
-      );
+      ResponseService.forbidden(res, "Password cannot be updated directly");
     }
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { username, role, ...otherUpdates },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("-password");
 
-    successResponse(res, { updatedUser }, 204);
+    ResponseService.noContent(res, { updatedUser });
   } catch (err) {
-    errorResponse(res, { message: "Failed to update user" });
+    ResponseService.badRequest(res, "Failed to update user");
   }
 };

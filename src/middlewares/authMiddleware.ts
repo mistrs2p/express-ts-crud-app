@@ -1,15 +1,15 @@
-import { errorResponse } from "@/utils/responseFormatter";
+import { ResponseService } from "@/services/ResponseService";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    errorResponse(res, { message: "Access denied" }, 401);
+    ResponseService.unauthorized(res, "Access denied");
     return;
   }
 
@@ -18,7 +18,7 @@ const authMiddleware = (
     (req as any).user = decoded;
     next();
   } catch (err) {
-    errorResponse(res, { message: "Invalid token" }, 400);
+    ResponseService.badRequest(res, "Invalid token");
     return;
   }
 };

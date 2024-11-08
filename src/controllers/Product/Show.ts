@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import Product from "@/schemas/Product";
 import { successResponse, errorResponse } from "@/utils/responseFormatter";
+import { ResponseService } from "@/services/ResponseService";
 
 export const show = async (req: Request, res: Response) => {
   try {
     const products = await Product.find();
-    return successResponse(res, { products });
+    ResponseService.success(res, { products });
   } catch (err) {
-    errorResponse(res, { message: "Failed to retrieve products" });
+    ResponseService.badRequest(res, "Failed to retrieve products");
   }
 };

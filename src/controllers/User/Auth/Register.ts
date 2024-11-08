@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "@/schemas/User";
-import { successResponse, errorResponse } from "@/utils/responseFormatter";
+import { ResponseService } from "@/services/ResponseService";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -11,8 +11,8 @@ export const register = async (req: Request, res: Response) => {
     const newUser = new User({ username, password: hashedPassword, role });
 
     await newUser.save();
-    successResponse(res, { message: "User created successfully" }, 201);
+    ResponseService.created(res, "User created successfully");
   } catch (err) {
-    errorResponse(res, { message: "Failed to create user" });
+    ResponseService.badRequest(res, "Failed to create user");
   }
 };

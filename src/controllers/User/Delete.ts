@@ -1,21 +1,20 @@
 import { Request, Response } from "express";
 import User from "@/schemas/User";
-import { successResponse, errorResponse } from "@/utils/responseFormatter";
+import { ResponseService } from "@/services/ResponseService";
 
 export const deleteUser = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   const { id } = req.params;
   try {
     const user = await User.findById(id);
     if (user && user.role === "admin") {
-      errorResponse(res, { message: "Cannot delete admin" }, 403);
-      return;
+      ResponseService.forbidden(res, "Cannot delete admin");
     }
     await User.findByIdAndDelete(id);
-    successResponse(res, { message: "User deleted successfully" });
+    ResponseService.success(res, "User deleted successfully");
   } catch (err) {
-    errorResponse(res, { message: "Failed to delete user" });
+    ResponseService.badRequest(res, "Failed to delete user");
   }
 };

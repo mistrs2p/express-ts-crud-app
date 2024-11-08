@@ -1,12 +1,12 @@
 import logger from "@/utils/logger";
-import { errorResponse } from "@/utils/responseFormatter";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import { ResponseService } from "@/services/ResponseService";
 
 const dbConnectionMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const dbStatus = mongoose.connection.readyState;
 
@@ -14,12 +14,10 @@ const dbConnectionMiddleware = (
     logger.info("DB Middleware Connection");
     next();
   } else {
-    errorResponse(
+    ResponseService.serviceUnavailable(
       res,
-      { message: "Database not connected. Please try again later." },
-      503
+      "Database not connected. Please try again later.",
     );
-    // throw new Error("Database Service in not available");
   }
 };
 
