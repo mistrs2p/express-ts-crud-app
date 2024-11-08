@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx ts-node-dev --respawn -r tsconfig-paths/register src/app.ts",
+    "gensecret": "npx ts-node-dev ./src/utils/generateSecret.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
