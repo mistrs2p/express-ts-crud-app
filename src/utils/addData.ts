@@ -37,7 +37,7 @@ export const addData = async () => {
       name: "California Roll",
       description: "Crab stick, avocado, cucumber, and tobiko.",
       price: 8.99,
-      categoryId: categoriesMap["Sushi Rolls"], 
+      categoryId: categoriesMap["Sushi Rolls"],
       ingredients: ["crab stick", "avocado", "cucumber", "tobiko"],
       image: "/images/california_roll.jpg",
     },
@@ -86,7 +86,3 @@ export const addData = async () => {
   await Product.insertMany(productsData);
   console.log("Products added successfully");
 };
-
-addData().catch((err) => {
-  console.error("Error adding data:", err);
-});
