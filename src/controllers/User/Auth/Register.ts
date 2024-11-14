@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "@/schemas/User";
 import jwt from "jsonwebtoken";
-import ResponseService from "@/services/ResponseService";
+import BadRequest from "@/services/Exception.ts/BadRequest";
+import Created from "@/services/Response/Created";
+import ResponseHandler from "@/services/Response";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -10,9 +12,7 @@ export const register = async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ username });
 
     if (existingUser) {
-      return ResponseService.badRequest("Username already exists", {
-        username,
-      });
+      throw new BadRequest("Username already exists", username);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,8 +35,8 @@ export const register = async (req: Request, res: Response) => {
       maxAge: 60 * 60 * 1000, // 1 hour
     });
 
-    ResponseService.created("User created successfully");
+    return new Created("User created successfully");
   } catch (err) {
-    ResponseService.badRequest("Failed to create user", err);
+    throw new BadRequest("Failed to create user", err);
   }
 };

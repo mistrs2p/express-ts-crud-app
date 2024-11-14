@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import User from "@/schemas/User";
-import ResponseService from "@/services/ResponseService";
+import Success from "@/services/Response/Ok";
+import BadRequest from "@/services/Exception.ts/BadRequest";
+import ResponseHandler from "@/services/Response";
 
-export const show = async (req: Request, res: Response) => {
+export const show = async (
+  req: Request,
+  res: Response
+): Promise<ResponseHandler> => {
   try {
     const users = await User.find().select("-password");
-    ResponseService.ok({ users });
+    return new Success({ users });
   } catch (err) {
-    ResponseService.badRequest("Failed to retrieve users");
+    throw new BadRequest("Failed to retrieve users");
   }
 };

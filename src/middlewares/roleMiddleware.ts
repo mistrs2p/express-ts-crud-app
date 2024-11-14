@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import ResponseService from "@/services/ResponseService";
+import Forbidden from "@/services/Exception.ts/Forbidden";
 
 const roleMiddleware = (role: "admin" | "user") => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if ((req as any).user.role !== role) {
-      ResponseService.forbidden("Access denied");
-      return;
+      throw new Forbidden("Access denied");
     }
     next();
   };

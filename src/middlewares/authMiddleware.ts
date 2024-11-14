@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import ResponseService from "@/services/ResponseService";
+import UnAuthorized from "@/services/Exception.ts/UnAuthorized";
+import BadRequest from "@/services/Exception.ts/BadRequest";
+import ResponseHandler from "@/services/Response";
 
 const authMiddleware = (
   req: Request,
@@ -9,8 +12,7 @@ const authMiddleware = (
 ): void => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    ResponseService.unauthorized("Access denied");
-    return;
+    throw new UnAuthorized("Access denied");
   }
 
   try {
@@ -18,8 +20,7 @@ const authMiddleware = (
     (req as any).user = decoded;
     next();
   } catch (err) {
-    ResponseService.badRequest("Invalid token");
-    return;
+    throw new BadRequest("Invalid token");
   }
 };
 

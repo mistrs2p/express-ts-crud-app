@@ -1,22 +1,26 @@
 import { Request, Response } from "express";
 import User, { USER_ROLE_ADMIN, USER_ROLE_USER } from "@/schemas/User";
-import ResponseService from "@/services/ResponseService";
+import Forbidden from "@/services/Exception.ts/Forbidden";
+import NotFound from "@/services/Exception.ts/NotFound";
+import NoContent from "@/services/Response/NoContent";
+import BadRequest from "@/services/Exception.ts/BadRequest";
+import ResponseHandler from "@/services/Response";
 
-export const update = async (req: Request, res: Response): Promise<void> => {
+export const update = async (
+  req: Request,
+  res: Response
+): Promise<ResponseHandler> => {
   const { id } = req.params;
   const { username, password, role, ...otherUpdates } = req.body;
 
   try {
     const user = await User.findById(id);
     if (!user) {
-      ResponseService.notFound("User not found");
-      return;
+      throw new NotFound("User not found");
     }
 
     if (role && user.role === USER_ROLE_ADMIN && role !== USER_ROLE_ADMIN) {
-      ResponseService.forbidden(
-        "Normal user cannot change the role of an admin user"
-      );
+      new Forbidden("Normal user cannot change the role of an admin user");
     }
 
     // if (user.role === USER_ROLE_USER && role && role === USER_ROLE_USER) {
@@ -24,7 +28,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
     // }
 
     if (password) {
-      ResponseService.forbidden("Password cannot be updated directly");
+      new Forbidden("Password cannot be updated directly");
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -33,8 +37,8 @@ export const update = async (req: Request, res: Response): Promise<void> => {
       { new: true, runValidators: true }
     ).select("-password");
 
-    ResponseService.noContent({ updatedUser });
+    return new NoContent({ updatedUser });
   } catch (err) {
-    ResponseService.badRequest("Failed to update user");
+    throw new BadRequest("Failed to update user");
   }
 };
