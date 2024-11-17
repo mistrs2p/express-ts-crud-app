@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import ResponseService from "@/services/ResponseService";
 import Forbidden from "@/services/Exception.ts/Forbidden";
 
 const roleMiddleware = (role: "admin" | "user") => {

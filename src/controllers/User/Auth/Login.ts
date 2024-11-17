@@ -4,14 +4,17 @@ import jwt from "jsonwebtoken";
 import User from "@/schemas/User";
 import ResponseHandler from "@/services/Response";
 import Success from "@/services/Response/Ok";
-import  BadRequest  from "@/services/Exception.ts/BadRequest";
+import BadRequest from "@/services/Exception.ts/BadRequest";
 
-export const login = async (req: Request, res: Response): Promise<ResponseHandler> => {
+export const login = async (
+  req: Request,
+  res: Response
+): Promise<ResponseHandler> => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    throw new BadRequest("Invalid credentials");
+    new BadRequest("Invalid credentials");
   }
 
   const token = jwt.sign(

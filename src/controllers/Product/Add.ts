@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import Product from "@/schemas/Product";
 import { addData } from "@/utils/addData";
-import ResponseService from "@/services/ResponseService";
+import Ok from "@/services/Response/Ok";
+import BadRequest from "@/services/Exception.ts/BadRequest";
+import ResponseHandler from "@/services/Response";
 
-export const add = async (req: Request, res: Response) => {
+export const add = async (req: Request, res: Response): Promise<ResponseHandler> => {
   try {
     const add = await addData();
     const data = await Product.find();
-    ResponseService.ok( { data });
+    return new Ok({ data });
   } catch (err) {
-    ResponseService.badRequest("Failed to retrieve products");
+    throw new BadRequest("Failed to retrieve products");
   }
 };

@@ -1,7 +1,6 @@
 import logger from "@/utils/logger";
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import ResponseService from "@/services/ResponseService";
 import ServiceUnavailable from "@/services/Exception.ts/ServiceUnavailable";
 
 const dbConnectionMiddleware = (
